@@ -10,12 +10,14 @@ class SubredditAdmin(admin.ModelAdmin):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "description", "url", "slug", "is_hot", "net_votes", "total_votes")
+    list_display = ("id", "title", "description", "url", "slug", "is_hot",
+                    "net_votes", "total_votes")
 
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ("id", "comment_text", "created_at", "net_votes", "total_votes")
+    list_display = ("id", "comment_text", "created_at", "net_votes",
+                    "total_votes")
 
 
 @admin.register(PostVote)
