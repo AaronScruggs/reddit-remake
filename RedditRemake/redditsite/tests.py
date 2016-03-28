@@ -49,7 +49,6 @@ class TestSetup(TestCase):
 class SubredditTests(TestSetup):
 
     def setUp(self):
-
         self.user = self.new_user()
         self.subreddit = self.new_subreddit()
         self.post1 = self.new_post(1, self.user, self.subreddit)
@@ -86,7 +85,6 @@ class PostTests(TestSetup):
         self.post.postvote_set.create(direction="D", post=self.post)
 
     def test_is_hot_true(self):
-
         self.assertTrue(self.post.is_hot(), msg="Post incorrectly not hot")
 
     def test_is_hot_false(self):

@@ -1,5 +1,14 @@
 from django.contrib import admin
 from redditsite.models import Subreddit, Post, Comment, PostVote, CommentVote
+from redditsite.models import Profile
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ("total_posts","total_comments",
+                    "link_karma", "comment_karma", "average_post_upvotes",
+                    "average_post_downvotes", "average_comment_upvotes",
+                    "average_comment_downvotes")
 
 
 @admin.register(Subreddit)

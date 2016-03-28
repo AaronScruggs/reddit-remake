@@ -6,6 +6,95 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 
+class Profile(models.Model):
+
+    user = models.OneToOneField(User, primary_key=True)
+
+    def link_karma(self):
+        """
+        :return: Total link karma for user.
+        """
+        posts = self.user.post_set.all()
+        karma = sum([post.link_karma() for post in posts])
+        return karma
+
+    def comment_karma(self):
+        """
+        :return: Total comment karma for user.
+        """
+        comments = self.user.comment_set.all()
+        karma = sum([comm.total_votes() for comm in comments])
+        return karma
+
+    def average_post_upvotes(self):
+        """
+        :return: The average number of upvotes per post.
+        """
+        if not self.user.post_set.count():
+            return 0
+
+        up_count = 0
+        for post in self.user.post_set.all():
+            ups = post.postvote_set.filter(direction__icontains="u").count()
+            up_count += ups
+        return up_count / self.user.post_set.count()
+
+    def average_post_downvotes(self):
+        """
+        :return: The average number of downvotes per post.
+        """
+        if not self.user.post_set.count():
+            return 0
+
+        down_count = 0
+        for post in self.user.post_set.all():
+            downs = post.postvote_set.filter(direction__icontains="d").count()
+            down_count += downs
+        return down_count / self.user.post_set.count()
+
+    def average_comment_upvotes(self):
+        """
+        :return: The average number of upvotes per comment.
+        """
+        if not self.user.comment_set.count():
+            return 0
+
+        up_count = 0
+        for comment in self.user.comment_set.all():
+            ups = comment.commentvote_set.filter(
+                direction__icontains="u").count()
+            up_count += ups
+
+        return up_count / self.user.comment_set.count()
+
+    def average_comment_downvotes(self):
+        """
+        :return: The average number of downvotes per comment.
+        """
+        if not self.user.comment_set.count():
+            return 0
+
+        down_count = 0
+        for comment in self.user.comment_set.all():
+            downs = comment.commentvote_set.filter(
+                direction__icontains="u").count()
+            down_count += downs
+
+        return down_count / self.user.comment_set.count()
+
+    def total_posts(self):
+        """
+        :return: Total number of posts for the user.
+        """
+        return self.user.post_set.count()
+
+    def total_comments(self):
+        """
+        :return: Total number of comments for the user.
+        """
+        return self.user.comment_set.count()
+
+
 class Subreddit(models.Model):
 
     title = models.CharField(max_length=100)
@@ -76,9 +165,21 @@ class Post(models.Model):
         return self.postvote_set.count() - (downs * 2)
 
     def total_votes(self):
+        """
+        :return: Total count of all votes on this post, renamed to
+         'Vote Karma' for the list display.
+        """
         return self.postvote_set.count()
-
     total_votes.short_description = "Vote Karma"
+
+    def link_karma(self):
+        """
+        If the post has a link it recieves 1 link karma for each vote.
+        """
+        if not self.url:
+            return 0
+        else:
+            return self.postvote_set.count()
 
     def __str__(self):
         return "title: {}".format(self.title)
@@ -90,9 +191,6 @@ class Comment(models.Model):
         max_length=1000,
         help_text="Must be over 255 characters",
         validators=[MinLengthValidator(256)])
-    #     help_text="Must be over 255 characters",
-    #     validators=[MinLengthValidator(256)]
-    # )
 
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -107,8 +205,11 @@ class Comment(models.Model):
         return self.commentvote_set.count() - (downs * 2)
 
     def total_votes(self):
+        """
+        :return: Total count of all votes on this comment, renamed to
+         'Vote Karma' for the list display.
+        """
         return self.commentvote_set.count()
-
     total_votes.short_description = "Vote Karma"
 
     def __str__(self):
@@ -117,10 +218,6 @@ class Comment(models.Model):
 
 
 class PostVote(models.Model):
-    # created at
-    # Up or down, Look up drop down option menu.
-    # post vote or comment vote.
-    # specific post or comment.
 
     UP = "U"
     DOWN = "D"
