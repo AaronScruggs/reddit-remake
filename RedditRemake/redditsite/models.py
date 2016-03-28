@@ -125,7 +125,8 @@ class Subreddit(models.Model):
 class Post(models.Model):
 
     title = models.CharField(max_length=100)
-    description = models.TextField(max_length=1000,
+    description = models.TextField(
+                                   max_length=1000,
                                    help_text="Must be over 255 characters",
                                    validators=[MinLengthValidator(256)]
                                    )
@@ -152,7 +153,7 @@ class Post(models.Model):
     subreddit = models.ForeignKey(Subreddit)
 
     def is_hot(self):
-        """ True if the post has recieved 3+ comments in the past 24 hours. """
+        """ True if the post has received 3+ comments in the past 24 hours. """
         three_hours_ago = timezone.now() - datetime.timedelta(hours=3)
         recent = self.comment_set.filter(
             created_at__gte=three_hours_ago)
