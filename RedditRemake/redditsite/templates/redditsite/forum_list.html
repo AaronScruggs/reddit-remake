@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Subreddit List</title>
+</head>
+<body>
+    <h1>Subreddits</h1>
+        <ul>
+
+            {% for subreddit in subreddits %}
+
+                <li><P>Title: {{ subreddit.title }}</P></li>
+                <li>Description: {{ subreddit.description }}</li>
+                <li>Post count: {{ subreddit.post_count }}</li>
+
+            {% endfor %}
+
+
+
+
+        </ul>
+
+
+
+
+</body>
+</html>

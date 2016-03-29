@@ -153,7 +153,7 @@ class Post(models.Model):
     subreddit = models.ForeignKey(Subreddit)
 
     def is_hot(self):
-        """ True if the post has received 3+ comments in the past 24 hours. """
+        """ True if the post has received 3+ comments in the past 3 hours. """
         three_hours_ago = timezone.now() - datetime.timedelta(hours=3)
         recent = self.comment_set.filter(
             created_at__gte=three_hours_ago)

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Forum Detail Page</title>
+</head>
+<body>
+<h1>{{ subreddit.title }} Subreddit</h1>
+<h2>{{ subreddit.description }}</h2>
+<h4>Most recent posts:</h4>
+    <ul>
+        {% for post in posts %}
+        <li>{{ post.title }} {{ post.created_at }}</li>
+
+
+
+        {% endfor %}
+
+    </ul>
+
+</body>
+</html>
+
