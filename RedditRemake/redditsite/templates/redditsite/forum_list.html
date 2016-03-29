@@ -10,7 +10,7 @@
 
             {% for subreddit in subreddits %}
 
-                <li><P>Title: {{ subreddit.title }}</P></li>
+                <li><P>Title: <a href="{% url 'subreddit_detail' subreddit.id %}">{{ subreddit.title }}</a></P></li>
                 <li>Description: {{ subreddit.description }}</li>
                 <li>Post count: {{ subreddit.post_count }}</li>
 

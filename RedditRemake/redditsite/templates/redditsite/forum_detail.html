@@ -10,7 +10,7 @@
 <h4>Most recent posts:</h4>
     <ul>
         {% for post in posts %}
-        <li>{{ post.title }} {{ post.created_at }}</li>
+        <li><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a> {{ post.created_at }}</li>
 
 
 

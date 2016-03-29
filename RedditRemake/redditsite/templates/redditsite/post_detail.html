@@ -10,10 +10,18 @@
     <ul>
         <li>Description: {{ post.description }}</li>
         <li>User: {{ post.user }}</li>
+        <li>Is Hot: {{ post.is_hot }}</li>
+        <li>Is Recent: {{ post.is_recent }}</li>
+    </ul>
+<h4>Comments</h4>
+    <ul>
+        {% for comment in comments %}
+            <li>User: {{ comment.user }}</li>
+            <li>Text: {{ comment.comment_text }}</li>
+        {% endfor %}
 
 
     </ul>
-
 
 
 </body>

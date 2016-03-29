@@ -159,6 +159,10 @@ class Post(models.Model):
             created_at__gte=three_hours_ago)
         return recent.count() >= 3
 
+    def is_recent(self):
+        three_hours_ago = timezone.now() - datetime.timedelta(hours=3)
+        return self.created_at > three_hours_ago
+
     @property
     def net_votes(self):
         """ Upvotes minus downvotes. """

@@ -16,11 +16,13 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
-from redditsite.views import list_subreddits, subreddit_detail, post_detail
+from redditsite.views import list_subreddits, subreddit_detail, post_detail, SubredditCreate, SubredditUpdate
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^redditsite/subredditlist/$', list_subreddits, name="list_subreddits"),
     url(r'^redditsite/subredditdetail/(?P<id>\d+)/$', subreddit_detail, name="subreddit_detail"),
-    url(r'^redditsite/postdetail/(?P<id>\d+)/$', post_detail, name="post_detail")
+    url(r'^redditsite/postdetail/(?P<id>\d+)/$', post_detail, name="post_detail"),
+    url(r'^redditsite/createsubreddit/$', SubredditCreate.as_view(), name="subreddit_create"),
+    url(r'^redditsite/updatesubreddit/(?P<id>\d+)/$', SubredditUpdate.as_view(), name="subreddit_update"),
 ]
