@@ -1,5 +1,5 @@
 from redditsite.views import SubredditCreate, SubredditUpdate, PostCreate,\
-    PostUpdate, SubredditList, SubredditDetail, PostDetail
+    PostUpdate, SubredditList, SubredditDetail, PostDetail, CommentCreate, CommentUpdate, CommentDetail
 
 from django.conf.urls import url
 
@@ -18,4 +18,7 @@ urlpatterns = [
         name='post_create'),
     url(r'^updatepost/(?P<id>\d+)/$', PostUpdate.as_view(),
         name="post_update"),
+    url(r'^createcomment/$', CommentCreate.as_view(), name="comment_create"),
+    url(r'^updatecomment/(?P<id>\d+)/$', CommentUpdate.as_view(), name="comment_update"),
+    url(r'^commentdetail/(?P<id>\d+)/$', CommentDetail.as_view(), name="comment_detail"),
 ]

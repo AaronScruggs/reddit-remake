@@ -15,9 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-
+from django.core.urlresolvers import reverse_lazy
+from django.contrib.auth.views import logout
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^redditsite/', include("redditsite.urls"))
+    url(r'^redditsite/', include("redditsite.urls")),
+    url(r'^logout/$', logout, {'next_page': reverse_lazy("list_subreddits")},
+        name='logout'),
+    url('^', include('django.contrib.auth.urls'))
 ]

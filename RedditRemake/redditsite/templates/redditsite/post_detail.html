@@ -17,12 +17,12 @@
     <ul>
         {% for comment in comments %}
             <li>User: {{ comment.user }}</li>
-            <li>Text: {{ comment.comment_text }}</li>
+            <li>Text:<a href="{% url 'comment_update' comment.id %}">{{ comment.comment_text }}</a></li>
         {% endfor %}
 
-
     </ul>
-
-
+<p><a href="{% url 'comment_create' %}">Add Comment</a> </p>
+<p><a href="{% url 'post_update' post.id %}">Update Post</a></p>
+<a href="{% url 'list_subreddits' %}">Main Page</a>
 </body>
 </html>

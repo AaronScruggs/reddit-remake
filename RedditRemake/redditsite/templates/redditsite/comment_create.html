@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Comment</title>
+</head>
+<body>
+    <h1>Create Comment</h1>
+    <form method="post" action="{% url 'comment_create' %}">
+        {% csrf_token %}
+        {{ form.as_ul }}
+        <input type="submit" name="submit" value="create">
+    </form>
+
+
+</body>
+</html>

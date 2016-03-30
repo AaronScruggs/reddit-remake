@@ -1,8 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import View, UpdateView, ListView, DetailView, CreateView
-from redditsite.forms import SubredditForm, PostForm
-from redditsite.models import Subreddit, Post
+from redditsite.forms import SubredditForm, PostForm, CommentForm
+from redditsite.models import Subreddit, Post, Comment
 from django.core.urlresolvers import reverse, reverse_lazy
 
 
@@ -47,7 +47,7 @@ class SubredditCreate(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class SubredditUpdate(UpdateView):
+class SubredditUpdate(LoginRequiredMixin, UpdateView):
     model = Subreddit
     form_class = SubredditForm
     template_name = "redditsite/subreddit_update.html"
@@ -56,43 +56,49 @@ class SubredditUpdate(UpdateView):
     def get_success_url(self):
         return reverse("subreddit_detail", args=(self.object.id,))
 
-###################### old post view ##############
+class PostCreate(LoginRequiredMixin, CreateView):
+    model = Post
+    form_class = PostForm
+    success_url = reverse_lazy("list_subreddits")
+    template_name = "redditsite/post_create.html"
 
-class PostCreate(View):
-    def get(self, request):
-        form = PostForm()
-
-        return render(request, "redditsite/post_create.html",
-                      {"form": form})
-
-    def post(self, request):
-        form = PostForm(request.POST)
-
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.user = request.user
-            post.save()
-            return redirect(reverse("list_subreddits"))
-
-        return render(request, "redditsite/post_create.html",
-                      {"form": form})
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 
-class PostUpdate(View):
-    def get(self, request, id):
-        post = get_object_or_404(Post, pk=id)
-        form = PostForm(instance=post)
-        return render(request, "redditsite/post_update.html",
-                      {"form": form, "post": post})
+class PostUpdate(LoginRequiredMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = "redditsite/post_update.html"
+    pk_url_kwarg = "id"
 
-    def post(self, request, id):
-        post = get_object_or_404(Post, pk=id)
-        form = PostForm(data=request.POST, instance=post)
+    def get_success_url(self):
+        return reverse("post_detail", args=(self.object.id,))
 
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.user = request.user
-            post.save()
-            return redirect(reverse("list_subreddits"))
-        return render(request, "redditsite/post_update.html",
-                      {"form": form, "post": post})
+
+class CommentCreate(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    success_url = reverse_lazy("list_subreddits")
+    template_name = "redditsite/comment_create.html"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+class CommentUpdate(LoginRequiredMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = "redditsite/comment_update.html"
+    pk_url_kwarg = "id"
+
+    def get_success_url(self):
+        return reverse("comment_detail", args=(self.object.id,))
+
+
+class CommentDetail(DetailView):
+    model = Comment
+    context_object_name = "comment"
+    pk_url_kwarg = "id"
