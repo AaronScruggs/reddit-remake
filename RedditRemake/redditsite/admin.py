@@ -5,7 +5,7 @@ from redditsite.models import Profile
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ("total_posts","total_comments",
+    list_display = ("total_posts", "total_comments",
                     "link_karma", "comment_karma", "average_post_upvotes",
                     "average_post_downvotes", "average_comment_upvotes",
                     "average_comment_downvotes")
@@ -37,34 +37,3 @@ class PostVoteAdmin(admin.ModelAdmin):
 @admin.register(CommentVote)
 class CommentVoteAdmin(admin.ModelAdmin):
     list_display = ("id", "created_at", "direction", "comment")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
