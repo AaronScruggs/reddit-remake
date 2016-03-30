@@ -1,97 +1,62 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import View
+from django.views.generic import View, UpdateView, ListView, DetailView, CreateView
 from redditsite.forms import SubredditForm, PostForm
 from redditsite.models import Subreddit, Post
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 
 
-class SubredditList(View):
-
-    def get(self, request):
-        """
-        :return: A clickable list of all subreddits.
-        """
-        subreddits = Subreddit.objects.all()
-
-        return render(request, "redditsite/forum_list.html",
-                      {"subreddits": subreddits})
+class SubredditList(ListView):
+    model = Subreddit
+    template_name = "redditsite/forum_list.html"
+    context_object_name = "subreddits"
 
 
-class SubredditDetail(View):
+class SubredditDetail(DetailView):
+    # add pagination
+    model = Subreddit
+    template_name = "redditsite/forum_detail.html"
+    context_object_name = "subreddit"
+    pk_url_kwarg = "id"
 
-    def get(self, request, id):
-        """
-        :return: Information on a specific subreddit page.
-        """
-        subreddit = get_object_or_404(Subreddit, pk=id)
-        posts = subreddit.post_set.order_by("-created_at")[:20]
-
-        return render(request, "redditsite/forum_detail.html",
-                      {"subreddit": subreddit,
-                       "posts": posts})
-
-
-class PostDetail(View):
-
-    def get(self, request, id):
-        """
-        :return: Information on a specific post page.
-        """
-        post = get_object_or_404(Post, pk=id)
-        comments = post.comment_set.order_by("-created_at")
-
-        return render(request, "redditsite/post_detail.html",
-                      {"post": post,
-                       "comments": comments})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["posts"] = self.object.post_set.all()
+        return context
 
 
-class SubredditCreate(View):
-    """
-    This is a class view for creating a new subreddit.
-    """
+class PostDetail(DetailView):
+    model = Post
+    context_object_name = "post"
+    pk_url_kwarg = "id"
 
-    def get(self, request):
-        form = SubredditForm()
-
-        return render(request, "redditsite/subreddit_create.html",
-                      {"form": form})
-
-    def post(self, request):
-        form = SubredditForm(request.POST)
-
-        if form.is_valid():
-            subreddit = form.save(commit=False)
-            subreddit.user = request.user
-            subreddit.save()
-            return redirect(reverse("list_subreddits"))
-
-        return render(request, "redditsite/subreddit_create.html",
-                      {"form": form})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["comments"] = self.object.comment_set.all().order_by("-created_at")
+        return context
 
 
-class SubredditUpdate(View):
-    """
-    Use for updating an existing subreddit.
-    """
+class SubredditCreate(LoginRequiredMixin, CreateView):
+    model = Subreddit
+    form_class = SubredditForm
+    success_url = reverse_lazy("list_subreddits")
+    template_name = "redditsite/subreddit_create.html"
 
-    def get(self, request, id):
-        subreddit = get_object_or_404(Subreddit, pk=id)
-        form = SubredditForm(instance=subreddit)
-        return render(request, "redditsite/subreddit_update.html",
-                      {"form": form, "subreddit": subreddit})
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
-    def post(self, request, id):
-        subreddit = get_object_or_404(Subreddit, pk=id)
-        form = SubredditForm(data=request.POST, instance=subreddit)
 
-        if form.is_valid():
-            subreddit = form.save(commit=False)
-            subreddit.user = request.user
-            subreddit.save()
-            return redirect(reverse("list_subreddits"))
-        return render(request, "redditsite/subreddit_update.html",
-                      {"form": form, "subreddit": subreddit})
+class SubredditUpdate(UpdateView):
+    model = Subreddit
+    form_class = SubredditForm
+    template_name = "redditsite/subreddit_update.html"
+    pk_url_kwarg = "id"
 
+    def get_success_url(self):
+        return reverse("subreddit_detail", args=(self.object.id,))
+
+###################### old post view ##############
 
 class PostCreate(View):
     def get(self, request):
