@@ -1,6 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import View, UpdateView, ListView, DetailView, CreateView
+from django.views.generic import UpdateView, ListView, DetailView, CreateView
 from redditsite.forms import SubredditForm, PostForm, CommentForm
 from redditsite.models import Subreddit, Post, Comment
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -13,7 +12,6 @@ class SubredditList(ListView):
 
 
 class SubredditDetail(DetailView):
-    # add pagination
     model = Subreddit
     template_name = "redditsite/forum_detail.html"
     context_object_name = "subreddit"
@@ -32,7 +30,8 @@ class PostDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["comments"] = self.object.comment_set.all().order_by("-created_at")
+        context["comments"] = self.object.comment_set.all().\
+            order_by("-created_at")
         return context
 
 

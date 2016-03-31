@@ -18,7 +18,10 @@ urlpatterns = [
         name='post_create'),
     url(r'^updatepost/(?P<id>\d+)/$', PostUpdate.as_view(),
         name="post_update"),
-    url(r'^createcomment/$', CommentCreate.as_view(), name="comment_create"),
-    url(r'^updatecomment/(?P<id>\d+)/$', CommentUpdate.as_view(), name="comment_update"),
-    url(r'^commentdetail/(?P<id>\d+)/$', CommentDetail.as_view(), name="comment_detail"),
+    url(r'^createcomment/$', CommentCreate.as_view(),
+        name="comment_create"),
+    url(r'^updatecomment/(?P<id>\d+)/$', CommentUpdate.as_view(),
+        name="comment_update"),
+    url(r'^commentdetail/(?P<id>\d+)/$', CommentDetail.as_view(),
+        name="comment_detail"),
 ]
